@@ -6,7 +6,15 @@ using Dapper;
 
 namespace Ecommerce.Controllers
 {
+    //dar exemplo de 1 validação
+
     //elaborar o enunciado do assessment
+    //elabore um cadastro de clientes 
+    //nome, email, cpf e data de cadastro
+    //nome precisa ter apenas letras e maximo 200 caracteres
+    //email com formato válido de e-mail
+    //cpf valido também
+
     public class ProdutosController : Controller
     {
         [HttpGet]
