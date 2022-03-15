@@ -6,9 +6,7 @@ using Dapper;
 
 namespace Ecommerce.Controllers
 {
-    //adicionar "remover" e "editar"
     //elaborar o enunciado do assessment
-
     public class ProdutosController : Controller
     {
         [HttpGet]
@@ -42,18 +40,71 @@ namespace Ecommerce.Controllers
         }
 
         [HttpGet]
-        public ActionResult Listar()
+        public ActionResult Listar(string nome)
         {
-            //abrir conexão
-            //executar comando
-            //fechar conexão
-
             IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
-            conexao.Open();                                                  //1
-            var resultado = conexao.Query<Produto>("select * from PRODUTO"); //2
-            conexao.Close();                                                 //3
+            conexao.Open();
+
+            string sql = "select * from PRODUTO";
+
+            if (nome != null)
+            {
+                sql += " where nome like '%@nome%'";
+            }
+
+            var resultado = conexao.Query<Produto>(sql, new { nome = nome}); 
+            conexao.Close();                                                 
 
             return View(resultado);
+        }
+
+        [HttpGet]
+        public ActionResult Remover(int id)
+        {
+            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
+            conexao.Open();
+            conexao.Execute("delete from produto where id = @id", new { id = id });
+            conexao.Close();
+
+            return RedirectToAction("listar");
+        }
+
+        [HttpGet]
+        public ActionResult Editar(int id)
+        {
+            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
+            conexao.Open();
+            var produto = conexao.QuerySingle<Produto>("select * from produto where id = @id", new { id = id });
+            conexao.Close();
+
+            return View(produto);
+        }
+
+        [HttpPost]
+        public ActionResult Editar(Produto produto)
+        {
+            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
+            conexao.Open();
+
+            string sql = @"
+                update produto set 
+                    nome = @nome,
+                    preco = @preco,
+                    quantidade = @quantidade
+                where id = @id
+                ";
+
+            conexao.Execute(sql, new
+            {
+                nome = produto.Nome,
+                preco = produto.Preco,
+                quantidade = produto.Quantidade,
+                id = produto.Id
+            });
+
+            conexao.Close();
+
+            return RedirectToAction("listar");
         }
     }
 }

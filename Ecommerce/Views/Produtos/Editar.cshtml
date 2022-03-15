@@ -1,0 +1,20 @@
+﻿@model Ecommerce.Models.Produtos.Produto
+
+<h5>Editar Produto: @Model.Id</h5>
+
+<form action="/produtos/editar" method="post">
+    <input type="hidden" name="id" value="@Model.Id">
+    <div class="mb-3">
+        <label class="form-label">Nome</label>
+        <input type="text" class="form-control" name="Nome" value="@Model.Nome">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Preço</label>
+        <input type="text" class="form-control" name="Preco" value="@Model.Preco">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Quantidade</label>
+        <input type="text" class="form-control" name="Quantidade" value="@Model.Quantidade">
+    </div>
+    <button type="submit" class="btn btn-primary">Gravar</button>
+</form>

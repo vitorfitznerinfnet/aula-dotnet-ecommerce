@@ -1,6 +1,13 @@
 ﻿@model IEnumerable<Ecommerce.Models.Produtos.Produto>
-<h5>Listar Produto</h5>
 
+<h5>Listar Produto</h5>
+<form action="/produtos/listar" method="get">
+    <div class="mb-3">
+        <input type="text" class="form-control" name="nome">
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+<hr />
 <table class="table">
     <thead>
         <tr>
@@ -8,11 +15,10 @@
             <th scope="col">NOME</th>
             <th scope="col">PRECO</th>
             <th scope="col">QUANTIDADE</th>
-            <th scope="col">QUANTIDADE</th>
+            <th scope="col">AÇÕES</th>
         </tr>
     </thead>
     <tbody>
-
         @foreach (var produto in Model)
         {
             <tr>
@@ -20,6 +26,10 @@
                 <td>@produto.Nome</td>
                 <td>@produto.Preco</td>
                 <td>@produto.Quantidade</td>
+                <td>
+                    <a href="/produtos/editar?id=@produto.Id" class="btn btn-sm btn-info">editar</a>
+                    <a href="/produtos/remover?id=@produto.Id" class="btn btn-sm btn-primary">Remover</a>
+                </td>
             </tr>
         }
     </tbody>
