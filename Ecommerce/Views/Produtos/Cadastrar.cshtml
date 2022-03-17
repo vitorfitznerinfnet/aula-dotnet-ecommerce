@@ -1,6 +1,6 @@
 ﻿@model Ecommerce.Models.Produtos.CadastrarViewModel
 
-<h5>Cadastrar Produto</h5>
+<h5>Cadastrar Produto @ViewBag.MeuNome</h5>
 
 <form action="/produtos/cadastrar" method="post">
 
@@ -9,7 +9,7 @@
         <input type="text" class="form-control" name="Nome" value="@Model.Nome">
         @if (Model.NomeError != null)
         {
-            <span style="color:red">@Model.NomeError - @Model.Nome</span>
+            <span style="color:red">@Model.NomeError</span>
         }
     </div>
     <div class="mb-3">

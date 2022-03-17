@@ -6,7 +6,7 @@ using Dapper;
 
 namespace Ecommerce.Controllers
 {
-    //dar exemplo de 1 validação
+    //fazer refactoring
 
     //elaborar o enunciado do assessment
     //elabore um cadastro de clientes 
@@ -15,7 +15,6 @@ namespace Ecommerce.Controllers
     //email com formato válido de e-mail
     //cpf valido também
 
-    //falar sobre viewBag
     //falar sobre app stateless vs statefull
     public class ProdutosController : Controller
     {
@@ -23,6 +22,7 @@ namespace Ecommerce.Controllers
         public ActionResult Cadastrar()
         {
             var viewModel = new CadastrarViewModel();
+            ViewBag.Titulo = "Cadastro de Produtos";
             return View(viewModel);
         }
 
@@ -36,6 +36,11 @@ namespace Ecommerce.Controllers
                 formulario.NomeError = "nome é obrigatório";
                 temErros = true;
             }
+            if (formulario.Nome.Length > 50)
+            {
+                formulario.NomeError = "nome não pode ter mais de 50 caracteres";
+                temErros = true;
+            }
             if (formulario.Quantidade < 0)
             {
                 formulario.QuantidadeError = "quantidade não pode ser menor que zero";
@@ -46,6 +51,8 @@ namespace Ecommerce.Controllers
                 formulario.PrecoErro = "preco não pode ser menor que zero";
                 temErros = true;
             }
+
+            ViewBag.MeuNome = "Vitor";
 
             if (temErros)
             {
@@ -72,6 +79,8 @@ namespace Ecommerce.Controllers
         [HttpGet]
         public ActionResult Listar(string nome)
         {
+            ViewBag.Titulo = "Lista de Produtos";
+
             IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
 
