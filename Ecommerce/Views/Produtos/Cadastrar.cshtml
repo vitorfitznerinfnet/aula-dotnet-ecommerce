@@ -1,17 +1,32 @@
-﻿<h5>Cadastrar Produto</h5>
+﻿@model Ecommerce.Models.Produtos.CadastrarViewModel
+
+<h5>Cadastrar Produto</h5>
 
 <form action="/produtos/cadastrar" method="post">
+
     <div class="mb-3">
         <label class="form-label">Nome</label>
-        <input type="text" class="form-control" name="Nome">
+        <input type="text" class="form-control" name="Nome" value="@Model.Nome">
+        @if (Model.NomeError != null)
+        {
+            <span style="color:red">@Model.NomeError - @Model.Nome</span>
+        }
     </div>
     <div class="mb-3">
         <label class="form-label">Preço</label>
         <input type="text" class="form-control" name="Preco">
+        @if (Model.PrecoErro != null)
+        {
+            <span style="color:red">@Model.PrecoErro</span>
+        }
     </div>
     <div class="mb-3">
         <label class="form-label">Quantidade</label>
         <input type="text" class="form-control" name="Quantidade">
+        @if (Model.QuantidadeError != null)
+        {
+            <span style="color:red">@Model.QuantidadeError</span>
+        }
     </div>
     <button type="submit" class="btn btn-primary">Cadastrar</button>
 </form>

@@ -15,20 +15,42 @@ namespace Ecommerce.Controllers
     //email com formato válido de e-mail
     //cpf valido também
 
+    //falar sobre viewBag
+    //falar sobre app stateless vs statefull
     public class ProdutosController : Controller
     {
         [HttpGet]
         public ActionResult Cadastrar()
         {
-            return View();
+            var viewModel = new CadastrarViewModel();
+            return View(viewModel);
         }
 
         [HttpPost]
-        public ActionResult Cadastrar(DadosDeCadastroDeProduto formulario)
+        public ActionResult Cadastrar(CadastrarViewModel formulario)
         {
-            //abrir conexão //1
-            //comando de insert //2 
-            //fechar conexão //3
+            bool temErros = false;
+
+            if (string.IsNullOrEmpty(formulario.Nome))
+            {
+                formulario.NomeError = "nome é obrigatório";
+                temErros = true;
+            }
+            if (formulario.Quantidade < 0)
+            {
+                formulario.QuantidadeError = "quantidade não pode ser menor que zero";
+                temErros = true;
+            }
+            if (formulario.Preco < 0)
+            {
+                formulario.PrecoErro = "preco não pode ser menor que zero";
+                temErros = true;
+            }
+
+            if (temErros)
+            {
+                return View(formulario);
+            }
 
             IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();                                //1
@@ -60,7 +82,7 @@ namespace Ecommerce.Controllers
                 sql += " where nome like '%@nome%'";
             }
 
-            var resultado = conexao.Query<Produto>(sql, new { nome = nome}); 
+            var resultado = conexao.Query<ListarViewModel.Produto>(sql, new { nome = nome}); 
             conexao.Close();                                                 
 
             return View(resultado);
@@ -82,14 +104,14 @@ namespace Ecommerce.Controllers
         {
             IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
-            var produto = conexao.QuerySingle<Produto>("select * from produto where id = @id", new { id = id });
+            var produto = conexao.QuerySingle<ListarViewModel.Produto>("select * from produto where id = @id", new { id = id });
             conexao.Close();
 
             return View(produto);
         }
 
         [HttpPost]
-        public ActionResult Editar(Produto produto)
+        public ActionResult Editar(ListarViewModel.Produto produto)
         {
             IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
