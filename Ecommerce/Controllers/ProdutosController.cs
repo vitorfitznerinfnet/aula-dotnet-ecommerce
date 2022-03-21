@@ -6,6 +6,7 @@ using Dapper;
 
 namespace Ecommerce.Controllers
 {
+    //falar sobre app stateless vs statefull
     //fazer refactoring
 
     //elaborar o enunciado do assessment
@@ -15,9 +16,16 @@ namespace Ecommerce.Controllers
     //email com formato válido de e-mail
     //cpf valido também
 
-    //falar sobre app stateless vs statefull
+    //remover código duplicado
     public class ProdutosController : Controller
     {
+        private IDbConnection conexao;
+
+        public ProdutosController(IDbConnection conexao)
+        {
+            this.conexao = conexao;
+        }
+
         [HttpGet]
         public ActionResult Cadastrar()
         {
@@ -59,7 +67,6 @@ namespace Ecommerce.Controllers
                 return View(formulario);
             }
 
-            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();                                //1
 
             string sql = @" 
@@ -81,7 +88,6 @@ namespace Ecommerce.Controllers
         {
             ViewBag.Titulo = "Lista de Produtos";
 
-            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
 
             string sql = "select * from PRODUTO";
@@ -100,7 +106,6 @@ namespace Ecommerce.Controllers
         [HttpGet]
         public ActionResult Remover(int id)
         {
-            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
             conexao.Execute("delete from produto where id = @id", new { id = id });
             conexao.Close();
@@ -111,7 +116,6 @@ namespace Ecommerce.Controllers
         [HttpGet]
         public ActionResult Editar(int id)
         {
-            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
             var produto = conexao.QuerySingle<ListarViewModel.Produto>("select * from produto where id = @id", new { id = id });
             conexao.Close();
@@ -122,7 +126,6 @@ namespace Ecommerce.Controllers
         [HttpPost]
         public ActionResult Editar(ListarViewModel.Produto produto)
         {
-            IDbConnection conexao = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Ecommerce;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"); //1
             conexao.Open();
 
             string sql = @"
