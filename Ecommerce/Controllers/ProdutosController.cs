@@ -3,12 +3,10 @@ using Ecommerce.Models.Produtos;
 using System.Data;
 using System.Data.SqlClient;
 using Dapper;
+using System.Data.Common;
 
 namespace Ecommerce.Controllers
 {
-    //falar sobre app stateless vs statefull
-    //fazer refactoring
-
     //elaborar o enunciado do assessment
     //elabore um cadastro de clientes 
     //nome, email, cpf e data de cadastro
@@ -20,10 +18,12 @@ namespace Ecommerce.Controllers
     public class ProdutosController : Controller
     {
         private IDbConnection conexao;
+        private readonly IRepository repository;
 
-        public ProdutosController(IDbConnection conexao)
+        public ProdutosController(IDbConnection conexao, IRepository repository)
         {
             this.conexao = conexao;
+            this.repository = repository;
         }
 
         [HttpGet]
@@ -67,13 +67,14 @@ namespace Ecommerce.Controllers
                 return View(formulario);
             }
 
-            conexao.Open();                                //1
+            conexao.Open();                                
 
             string sql = @" 
                 insert into produto (nome, preco, quantidade)
                 values (@nome, @preco, @quantidade)
                 ";                                         //2
-            conexao.Execute(sql, new {
+            conexao.Execute(sql, new
+            {
                 nome = formulario.Nome,
                 preco = formulario.Preco,
                 quantidade = formulario.Quantidade,
@@ -88,17 +89,7 @@ namespace Ecommerce.Controllers
         {
             ViewBag.Titulo = "Lista de Produtos";
 
-            conexao.Open();
-
-            string sql = "select * from PRODUTO";
-
-            if (nome != null)
-            {
-                sql += " where nome like '%@nome%'";
-            }
-
-            var resultado = conexao.Query<ListarViewModel.Produto>(sql, new { nome = nome}); 
-            conexao.Close();                                                 
+            var resultado = repository.ListarProdutos(nome);
 
             return View(resultado);
         }
@@ -106,9 +97,7 @@ namespace Ecommerce.Controllers
         [HttpGet]
         public ActionResult Remover(int id)
         {
-            conexao.Open();
-            conexao.Execute("delete from produto where id = @id", new { id = id });
-            conexao.Close();
+            repository.RemoverProduto(id);
 
             return RedirectToAction("listar");
         }
@@ -116,9 +105,7 @@ namespace Ecommerce.Controllers
         [HttpGet]
         public ActionResult Editar(int id)
         {
-            conexao.Open();
-            var produto = conexao.QuerySingle<ListarViewModel.Produto>("select * from produto where id = @id", new { id = id });
-            conexao.Close();
+            var produto = repository.BuscarProduto(id);
 
             return View(produto);
         }

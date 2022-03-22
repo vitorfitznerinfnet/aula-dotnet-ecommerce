@@ -1,3 +1,4 @@
+using Ecommerce.Controllers;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -9,6 +10,7 @@ builder.Services.AddControllersWithViews();
 var connString = builder.Configuration.GetConnectionString("sqlServer");
 
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connString));
+builder.Services.AddScoped<IRepository, Repository>();
 
 var app = builder.Build();
 
