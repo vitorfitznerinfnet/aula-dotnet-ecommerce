@@ -1,29 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ecommerce.Models.Produtos;
 using System.Data;
-using System.Data.SqlClient;
 using Dapper;
+using System.Data.SqlClient;
 using System.Data.Common;
 
 namespace Ecommerce.Controllers
 {
-    //elaborar o enunciado do assessment
-    //elabore um cadastro de clientes 
-    //nome, email, cpf e data de cadastro
-    //nome precisa ter apenas letras e maximo 200 caracteres
-    //email com formato válido de e-mail
-    //cpf valido também
+    //estrutura de dados e algoritmos
+    //dominar bem uma linguagem de programação
+    //SQL avançado
+    //padrões de projeto -> diagrama
+    //arquitetura de software
 
-    //remover código duplicado
     public class ProdutosController : Controller
     {
         private IDbConnection conexao;
         private readonly IRepository repository;
+        private readonly Service service;
 
-        public ProdutosController(IDbConnection conexao, IRepository repository)
+        public ProdutosController(IDbConnection conexao, IRepository repository, Service service)
         {
             this.conexao = conexao;
             this.repository = repository;
+            this.service = service;
         }
 
         [HttpGet]
@@ -37,51 +37,14 @@ namespace Ecommerce.Controllers
         [HttpPost]
         public ActionResult Cadastrar(CadastrarViewModel formulario)
         {
-            bool temErros = false;
+            var resultado = service.CadastrarProduto(formulario);
 
-            if (string.IsNullOrEmpty(formulario.Nome))
+            if (resultado.CadastradoComSucesso == true)
             {
-                formulario.NomeError = "nome é obrigatório";
-                temErros = true;
-            }
-            if (formulario.Nome.Length > 50)
-            {
-                formulario.NomeError = "nome não pode ter mais de 50 caracteres";
-                temErros = true;
-            }
-            if (formulario.Quantidade < 0)
-            {
-                formulario.QuantidadeError = "quantidade não pode ser menor que zero";
-                temErros = true;
-            }
-            if (formulario.Preco < 0)
-            {
-                formulario.PrecoErro = "preco não pode ser menor que zero";
-                temErros = true;
+                return RedirectToAction("listar");
             }
 
-            ViewBag.MeuNome = "Vitor";
-
-            if (temErros)
-            {
-                return View(formulario);
-            }
-
-            conexao.Open();                                
-
-            string sql = @" 
-                insert into produto (nome, preco, quantidade)
-                values (@nome, @preco, @quantidade)
-                ";                                         //2
-            conexao.Execute(sql, new
-            {
-                nome = formulario.Nome,
-                preco = formulario.Preco,
-                quantidade = formulario.Quantidade,
-            });                                            //2
-            conexao.Close();                               //3
-
-            return RedirectToAction("listar");
+            return View(formulario);
         }
 
         [HttpGet]

@@ -10,7 +10,11 @@ builder.Services.AddControllersWithViews();
 var connString = builder.Configuration.GetConnectionString("sqlServer");
 
 builder.Services.AddScoped<IDbConnection>(db => new SqlConnection(connString));
+
 builder.Services.AddScoped<IRepository, Repository>();
+
+builder.Services.AddScoped<Service>();
+
 
 var app = builder.Build();
 

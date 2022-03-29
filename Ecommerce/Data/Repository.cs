@@ -18,6 +18,7 @@ namespace Ecommerce.Controllers
             conexao.Open();
             var produto = conexao.QuerySingle<ListarViewModel.Produto>("select * from produto where id = @id", new { id = id });
             conexao.Close();
+            return produto;
         }
 
         public IEnumerable<ListarViewModel.Produto> ListarProdutos(string nome)
@@ -42,6 +43,25 @@ namespace Ecommerce.Controllers
         {
             conexao.Open();
             conexao.Execute("delete from produto where id = @id", new { id = id });
+            conexao.Close();
+        }
+
+        public void InserirProduto(string nome, decimal preco, int quantidade)
+        {
+            conexao.Open();
+
+            string sql = @" 
+                insert into produto (nome, preco, quantidade)
+                values (@nome, @preco, @quantidade)
+                ";
+
+            conexao.Execute(sql, new
+            {
+                nome = nome,
+                preco = preco,
+                quantidade = quantidade,
+            });
+
             conexao.Close();
         }
     }
